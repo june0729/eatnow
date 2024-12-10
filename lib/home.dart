@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'cart.dart'; // Import CartScreen
 
 void main() {
   runApp(EatNowApp());
@@ -14,44 +15,133 @@ class EatNowApp extends StatelessWidget {
   }
 }
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  // List to hold FoodItem objects instead of strings
+  List<FoodItem> cartItems = [];
+
+  void addToCart(FoodItem foodItem) {
+    setState(() {
+      cartItems.add(foodItem);
+    });
+    // Show a snackbar for feedback
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('${foodItem.name} added to cart')),
+    );
+  }
+
+  void removeFromCart(FoodItem foodItem) {
+    setState(() {
+      cartItems.remove(foodItem);
+    });
+     ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('${foodItem.name} removed from cart')),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () {},
-        ),
-        title: Center(
-          child: Image.asset(
-            'assets/images/logo.png', // Replace with your logo path
-            height: 40,
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(57.0),
+        child: AppBar(
+          backgroundColor: Colors.black,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: Colors.white),
+            onPressed: () {
+              // Navigate to LoginScreen or another screen
+            },
           ),
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.shopping_cart, color: Colors.white),
-            onPressed: () {},
+          title: Center(
+            child: Image.asset(
+              'assets/images/logo.png',
+              height: 65,
+              fit: BoxFit.contain,
+            ),
           ),
-        ],
+          actions: [
+            IconButton(
+              icon: Stack(
+                children: [
+                  const Icon(Icons.shopping_cart, color: Colors.white),
+                  if (cartItems.isNotEmpty)
+                    Positioned(
+                      right: 0,
+                      top: 0,
+                      child: Container(
+                        padding: const EdgeInsets.all(6), // Increased padding for larger badge
+                        decoration: BoxDecoration(
+                          color: Colors.red,
+                          borderRadius: BorderRadius.circular(12), // Slightly larger radius for the rounded corners
+                        ),
+                        constraints: const BoxConstraints(
+                          minWidth: 18,  // Increased width
+                          minHeight: 18,  // Increased height
+                        ),
+                        child: Text(
+                          '${cartItems.length}',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 12, // Increased font size for visibility
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+              onPressed: () {
+                // Navigate to the CartScreen and pass the cart items
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => CartScreen(
+                      cartItems: cartItems,
+                      onRemoveFromCart: removeFromCart, // Pass remove callback
+                    ),
+                  ),
+                ).then((updatedCart) {
+                  // Update the cart items with the updated list after removing items
+                  if (updatedCart != null) {
+                    setState(() {
+                      cartItems = updatedCart;
+                    });
+                  }
+                });
+              },
+            ),
+          ],
+        ),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            const Center(
+              child: Text(
+                'Home',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            const SizedBox(height: 35),
             const Text(
               'Your Meal, Your Schedule! Browse our special menu, order ahead, and pick up with no wait.',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 16,
-                fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 30),
             const Text(
               'Popular Foods',
               style: TextStyle(
@@ -61,19 +151,53 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 10),
-            Column(
-              children: [
-                FoodItem(
-                  imageUrl: 'assets/images/banmian.jpg', // Replace with your food image
-                  title: 'Silver Inn',
-                  tags: const ['Thai food', 'Thai food', 'Thai food'],
-                ),
-                FoodItem(
-                  imageUrl: 'assets/images/banmian.jpg', // Replace with your food image
-                  title: 'Hillside Retreat',
-                  tags: const ['Thai food', 'American', 'Italian'],
-                ),
-              ],
+            Expanded(
+              child: ListView(
+                children: [
+                  FoodItemWidget(
+                    imageUrl: 'assets/images/banmian.jpg',
+                    name: 'Silver Inn',
+                    price: 15.99,
+                    tags: const ['Thai food', 'Thai food', 'Thai food'],
+                    onAddToCart: addToCart,
+                  ),
+                  FoodItemWidget(
+                    imageUrl: 'assets/images/banmian.jpg',
+                    name: 'Hillside Retreat',
+                    price: 20.00,
+                    tags: const ['Thai food', 'American', 'Italian'],
+                    onAddToCart: addToCart,
+                  ),
+                  FoodItemWidget(
+                    imageUrl: 'assets/images/banmian.jpg',
+                    name: 'Ocean Breeze',
+                    price: 22.50,
+                    tags: const ['Seafood', 'Chinese', 'Fresh'],
+                    onAddToCart: addToCart,
+                  ),
+                  FoodItemWidget(
+                    imageUrl: 'assets/images/banmian.jpg',
+                    name: 'Mountain Feast',
+                    price: 18.00,
+                    tags: const ['American', 'Grill', 'BBQ'],
+                    onAddToCart: addToCart,
+                  ),
+                  FoodItemWidget(
+                    imageUrl: 'assets/images/banmian.jpg',
+                    name: 'Urban Bites',
+                    price: 12.50,
+                    tags: const ['Fast Food', 'Burgers', 'Fries'],
+                    onAddToCart: addToCart,
+                  ),
+                  FoodItemWidget(
+                    imageUrl: 'assets/images/banmian.jpg',
+                    name: 'Vegan Delights',
+                    price: 10.00,
+                    tags: const ['Vegan', 'Healthy', 'Salads'],
+                    onAddToCart: addToCart,
+                  ),
+                ],
+              ),
             ),
           ],
         ),
@@ -101,15 +225,19 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
-class FoodItem extends StatelessWidget {
+class FoodItemWidget extends StatelessWidget {
   final String imageUrl;
-  final String title;
+  final String name;
+  final double price;
   final List<String> tags;
+  final Function(FoodItem) onAddToCart;
 
-  FoodItem({
+  FoodItemWidget({
     required this.imageUrl,
-    required this.title,
+    required this.name,
+    required this.price,
     required this.tags,
+    required this.onAddToCart,
   });
 
   @override
@@ -127,8 +255,8 @@ class FoodItem extends StatelessWidget {
               borderRadius: BorderRadius.circular(10),
               child: Image.asset(
                 imageUrl,
-                width: 120,
-                height: 120,
+                width: 160,
+                height: 140,
                 fit: BoxFit.cover,
               ),
             ),
@@ -137,13 +265,29 @@ class FoodItem extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      color: Colors.black,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        name,
+                        style: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.add, color: Colors.orange),
+                        onPressed: () {
+                          FoodItem foodItem = FoodItem(
+                            name: name,
+                            imageUrl: imageUrl,
+                            price: price,
+                          );
+                          onAddToCart(foodItem); // Add FoodItem to cart
+                        },
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 5),
                   Text(
@@ -162,3 +306,4 @@ class FoodItem extends StatelessWidget {
     );
   }
 }
+
