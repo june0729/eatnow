@@ -192,18 +192,28 @@ class _CartScreenState extends State<CartScreen> {
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'Total: ',
-                  style: TextStyle(color: Colors.white),
-                ),
-                Text(
-                  'MYR ${totalPrice.toStringAsFixed(2)}',
-                  style: TextStyle(color: Colors.white),
-                ),
-              ],
+            child: Container(
+              color: const Color.fromARGB(255, 250, 193, 5),  // Set the background color to yellow
+              padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Total: ',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 22, // Larger font size for 'Total'
+                    ),
+                  ),
+                  Text(
+                    'MYR ${totalPrice.toStringAsFixed(2)}',
+                    style: TextStyle(
+                      color: Colors.black,  // Text color set to black
+                      fontSize: 18, // Slightly smaller font size for 'MYR'
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ],

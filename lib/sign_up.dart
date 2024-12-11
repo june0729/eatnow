@@ -1,19 +1,6 @@
-import 'package:eatnow/login.dart';
+import 'package:eatnow/profile_information.dart';
 import 'package:flutter/material.dart';
-
-void main() {
-  runApp(EatNowApp());
-}
-
-class EatNowApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: SignUpScreen(),
-    );
-  }
-}
+import 'login.dart';
 
 class SignUpScreen extends StatelessWidget {
   @override
@@ -37,7 +24,7 @@ class SignUpScreen extends StatelessWidget {
               child: Column(
                 children: [
                   Image.asset(
-                    'assets/images/logo.png', // Replace with your logo path
+                    'assets/images/logo.png',
                     height: 130,
                   ),
                   const SizedBox(height: 8),
@@ -60,14 +47,12 @@ class SignUpScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  
-                  // Fixed the navigation for "Have an account?"
                   GestureDetector(
                     onTap: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => LoginScreen(), // Navigate to LoginScreen
+                          builder: (context) => LoginScreen(),
                         ),
                       );
                     },
@@ -79,7 +64,7 @@ class SignUpScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 10), // Space between "Have an account?" and "Sign in"
+                  const SizedBox(height: 10),
                   GestureDetector(
                     onTap: () {
                       Navigator.push(
@@ -102,8 +87,6 @@ class SignUpScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 40),
-
-            // Email label and text field
             const Text(
               "Email",
               style: TextStyle(
@@ -126,8 +109,6 @@ class SignUpScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 20),
-
-            // Password label and text field
             const Text(
               "Password",
               style: TextStyle(
@@ -151,13 +132,16 @@ class SignUpScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 30),
-
-            // Sign-up button
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
-                  // Add sign-up functionality here
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ProfileInformationScreen(),
+                    ),
+                  );
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.orange,

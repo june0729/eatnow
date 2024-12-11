@@ -1,5 +1,9 @@
+import 'package:eatnow/Chinese_categories.dart';
+import 'package:eatnow/categories.dart';
 import 'package:flutter/material.dart';
 import 'cart.dart'; // Import CartScreen
+import 'login.dart'; // Import LoginScreen
+import 'profile_user.dart';
 
 void main() {
   runApp(EatNowApp());
@@ -21,14 +25,13 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  // List to hold FoodItem objects instead of strings
   List<FoodItem> cartItems = [];
+  int _currentIndex = 0;  // Track the current index of BottomNavigationBar
 
   void addToCart(FoodItem foodItem) {
     setState(() {
       cartItems.add(foodItem);
     });
-    // Show a snackbar for feedback
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('${foodItem.name} added to cart')),
     );
@@ -38,9 +41,27 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       cartItems.remove(foodItem);
     });
-     ScaffoldMessenger.of(context).showSnackBar(
+    ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('${foodItem.name} removed from cart')),
     );
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _currentIndex = index;  // Update the selected index
+    });
+
+    if (index == 1) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => CategoriesScreen()), // Navigate to CategoriesScreen
+      );
+    } else if (index == 2) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => ProfileUserScreen()), // Navigate to Profile
+      );
+    }
   }
 
   @override
@@ -54,7 +75,11 @@ class _HomeScreenState extends State<HomeScreen> {
           leading: IconButton(
             icon: const Icon(Icons.arrow_back, color: Colors.white),
             onPressed: () {
-              // Navigate to LoginScreen or another screen
+              // Navigate to the LoginScreen when back button is pressed
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => LoginScreen()),
+              );
             },
           ),
           title: Center(
@@ -74,20 +99,20 @@ class _HomeScreenState extends State<HomeScreen> {
                       right: 0,
                       top: 0,
                       child: Container(
-                        padding: const EdgeInsets.all(6), // Increased padding for larger badge
+                        padding: const EdgeInsets.all(6),
                         decoration: BoxDecoration(
                           color: Colors.red,
-                          borderRadius: BorderRadius.circular(12), // Slightly larger radius for the rounded corners
+                          borderRadius: BorderRadius.circular(12),
                         ),
                         constraints: const BoxConstraints(
-                          minWidth: 18,  // Increased width
-                          minHeight: 18,  // Increased height
+                          minWidth: 18,
+                          minHeight: 18,
                         ),
                         child: Text(
                           '${cartItems.length}',
                           style: const TextStyle(
                             color: Colors.white,
-                            fontSize: 12, // Increased font size for visibility
+                            fontSize: 12,
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -96,17 +121,15 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ),
               onPressed: () {
-                // Navigate to the CartScreen and pass the cart items
                 Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) => CartScreen(
                       cartItems: cartItems,
-                      onRemoveFromCart: removeFromCart, // Pass remove callback
+                      onRemoveFromCart: removeFromCart,
                     ),
                   ),
                 ).then((updatedCart) {
-                  // Update the cart items with the updated list after removing items
                   if (updatedCart != null) {
                     setState(() {
                       cartItems = updatedCart;
@@ -203,6 +226,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,  // Use the currentIndex property
         backgroundColor: Colors.black,
         selectedItemColor: Colors.orange,
         unselectedItemColor: Colors.grey,
@@ -220,6 +244,7 @@ class _HomeScreenState extends State<HomeScreen> {
             label: 'Account',
           ),
         ],
+        onTap: _onItemTapped,  // Use the _onItemTapped method to change selected tab
       ),
     );
   }
@@ -284,7 +309,7 @@ class FoodItemWidget extends StatelessWidget {
                             imageUrl: imageUrl,
                             price: price,
                           );
-                          onAddToCart(foodItem); // Add FoodItem to cart
+                          onAddToCart(foodItem);
                         },
                       ),
                     ],
@@ -306,4 +331,3 @@ class FoodItemWidget extends StatelessWidget {
     );
   }
 }
-
